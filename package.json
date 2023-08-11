@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/thiagorasouza/drive-clone/issues"
   },
-  "homepage": "https://github.com/thiagorasouza/drive-clone#readme"
+  "homepage": "https://github.com/thiagorasouza/drive-clone#readme",
+  "devDependencies": {
+    "prettier": "^3.0.1"
+  }
 }
