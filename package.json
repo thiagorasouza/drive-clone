@@ -4,7 +4,8 @@
   "description": "Google Drive Clone",
   "main": "index.js",
   "scripts": {
-    "start": "mkdir -p uploads && node js/server.js",
+    "start": "node js/server.js",
+    "start:dev": "npx nodemon js/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
