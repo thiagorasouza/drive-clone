@@ -4,6 +4,7 @@
   "description": "Google Drive Clone",
   "main": "index.js",
   "scripts": {
+    "start": "nodemon js/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -18,6 +19,7 @@
   },
   "homepage": "https://github.com/thiagorasouza/drive-clone#readme",
   "devDependencies": {
+    "nodemon": "^3.0.1",
     "prettier": "^3.0.1"
   },
   "engines": {
