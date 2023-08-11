@@ -16,7 +16,34 @@
     >
       <label for="file">Choose a file to upload:</label>
       <input type="file" name="file" id="file" />
-      <button type="button">Upload</button>
+      <button type="button" id="btn-upload">Upload</button>
     </div>
+
+    <script>
+      const btnUpload = document.getElementById("btn-upload");
+      const inputFile = document.getElementById("file");
+
+      btnUpload.addEventListener("click", () => {
+        const fileObj = inputFile.files[0];
+
+        const formData = new FormData();
+        formData.append("file", fileObj);
+
+        upload(formData);
+      });
+
+      async function upload(formData) {
+        try {
+          console.log("Trying to upload");
+          await fetch("/upload", {
+            method: "PUT",
+            body: formData,
+          });
+          console.log("File uploaded");
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    </script>
   </body>
 </html>
