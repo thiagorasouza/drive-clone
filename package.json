@@ -1,0 +1,20 @@
+{
+  "name": "@thiagorasouza/drive-clone",
+  "version": "1.0.0",
+  "description": "Google Drive Clone",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thiagorasouza/drive-clone.git"
+  },
+  "keywords": [],
+  "author": "thiagorasouza",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/thiagorasouza/drive-clone/issues"
+  },
+  "homepage": "https://github.com/thiagorasouza/drive-clone#readme"
+}
