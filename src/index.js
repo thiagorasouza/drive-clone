@@ -2,8 +2,7 @@ const http = require("node:http");
 const fs = require("node:fs");
 const path = require("node:path");
 const busboy = require("busboy");
-const os = require("os");
-
+// const os = require("os");
 const UPLOAD_FOLDER = path.join(__dirname, "..", "uploads");
 
 const server = http.createServer(async (req, res) => {
@@ -42,7 +41,8 @@ async function showIndex(req, res) {
 
 function getFilePath(filename) {
   const [fname, fext] = filename.split(".");
-  return path.join(os.tmpdir(), `${fname}-${Date.now().toString()}.${fext}`);
+  // return path.join(os.tmpdir(), `${fname}-${Date.now().toString()}.${fext}`);
+  return path.join(UPLOAD_FOLDER, `${fname}-${Date.now().toString()}.${fext}`);
 }
 
 server.listen(4000, () => {
