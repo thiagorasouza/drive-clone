@@ -17,11 +17,13 @@
       <label for="file">Choose a file to upload:</label>
       <input type="file" name="file" id="file" />
       <button type="button" id="btn-upload">Upload</button>
+      <p>Status: <span id="status"></span></p>
     </div>
 
     <script>
       const btnUpload = document.getElementById("btn-upload");
       const inputFile = document.getElementById("file");
+      const status = document.getElementById("status");
 
       btnUpload.addEventListener("click", () => {
         const fileObj = inputFile.files[0];
@@ -34,12 +36,15 @@
 
       async function upload(formData) {
         try {
-          console.log("Trying to upload");
-          await fetch("/upload", {
+          status.textContent = "uploading...";
+          const response = await fetch("/upload", {
             method: "PUT",
             body: formData,
           });
-          console.log("File uploaded");
+
+          if (response.status === 200) {
+            status.textContent = "file uploaded.";
+          }
         } catch (error) {
           console.log(error);
         }

@@ -24,7 +24,7 @@ async function uploadFile(req, res) {
 
   bb.on("close", () => {
     res.writeHead(200, { Connection: "close" });
-    res.end("File uploaded");
+    res.end();
   });
 
   req.pipe(bb);
