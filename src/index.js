@@ -32,7 +32,7 @@ async function uploadFile(req, res) {
 }
 
 async function showIndex(req, res) {
-  const indexPath = path.join(__dirname, "..", "index.html");
+  const indexPath = path.join(__dirname, "..", "public", "index.html");
   const indexContent = await fs.promises.readFile(indexPath, "utf-8");
 
   res.statusCode = 200;
@@ -45,6 +45,6 @@ function getFilePath(filename) {
   return path.join(os.tmpdir(), `${fname}-${Date.now().toString()}.${fext}`);
 }
 
-server.listen(3000, () => {
-  console.log("Server running on 3000");
+server.listen(4000, () => {
+  console.log("Server running on 4000");
 });
