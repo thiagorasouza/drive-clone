@@ -20,13 +20,21 @@
       <p>Status: <span id="status"></span></p>
     </div>
 
+    <script src="/socket.io/socket.io.js"></script>
     <script>
       const btnUpload = document.getElementById("btn-upload");
       const inputFile = document.getElementById("file");
       const status = document.getElementById("status");
 
       btnUpload.addEventListener("click", () => {
+        const socket = io();
         const fileObj = inputFile.files[0];
+
+        socket.on("progress", (bytesRead) => {
+          status.textContent = `Progress: ${Math.floor(
+            (bytesRead / fileObj.size) * 100,
+          )}%`;
+        });
 
         const formData = new FormData();
         formData.append("file", fileObj);

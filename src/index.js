@@ -3,6 +3,8 @@ const fs = require("node:fs");
 const path = require("node:path");
 const busboy = require("busboy");
 // const os = require("os");
+const { Server } = require("socket.io");
+
 const UPLOAD_FOLDER = path.join(__dirname, "..", "uploads");
 
 const server = http.createServer(async (req, res) => {
@@ -13,16 +15,33 @@ const server = http.createServer(async (req, res) => {
   }
 });
 
+const io = new Server(server);
+let currentSocket;
+
+io.on("connection", (socket) => {
+  currentSocket = socket;
+  console.log(`Socket connected: ${socket.id}`);
+});
+
 async function uploadFile(req, res) {
   const bb = busboy({ headers: req.headers });
 
   bb.on("file", (name, file, info) => {
     const { filename } = info;
     const filePath = getFilePath(filename);
+
+    let bytesRead = 0;
+    file.on("data", (chunk) => {
+      bytesRead += chunk.length;
+      if (!currentSocket) return;
+      currentSocket.emit("progress", bytesRead);
+    });
+
     file.pipe(fs.createWriteStream(filePath));
   });
 
   bb.on("close", () => {
+    currentSocket.disconnect();
     res.writeHead(200, { Connection: "close" });
     res.end();
   });
