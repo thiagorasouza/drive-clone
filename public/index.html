@@ -17,20 +17,24 @@
       <label for="file">Choose a file to upload:</label>
       <input type="file" name="file" id="file" />
       <button type="button" id="btn-upload">Upload</button>
+      <button type="button" id="btn-cancel">Cancel</button>
       <p>Status: <span id="status"></span></p>
     </div>
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
       const btnUpload = document.getElementById("btn-upload");
+      const btnCancel = document.getElementById("btn-cancel");
       const inputFile = document.getElementById("file");
       const status = document.getElementById("status");
+      const controller = new AbortController();
 
       btnUpload.addEventListener("click", () => {
         const socket = io();
         const fileObj = inputFile.files[0];
 
         socket.on("progress", (bytesRead) => {
+          if (controller.signal.aborted) return;
           status.textContent = `Progress: ${Math.floor(
             (bytesRead / fileObj.size) * 100,
           )}%`;
@@ -42,12 +46,18 @@
         upload(formData);
       });
 
+      btnCancel.addEventListener("click", () => {
+        controller.abort();
+        status.textContent = "upload canceled";
+      });
+
       async function upload(formData) {
         try {
           status.textContent = "uploading...";
           const response = await fetch("/upload", {
             method: "PUT",
             body: formData,
+            signal: controller.signal,
           });
 
           if (response.status === 200) {
