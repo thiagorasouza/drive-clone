@@ -7,6 +7,8 @@ const { Server } = require("socket.io");
 const sanitize = require("sanitize-filename");
 
 const UPLOAD_FOLDER = path.join(__dirname, "..", "uploads");
+// const FILE_SIZE_LIMIT = 2147483648; // 2GB
+const FILE_SIZE_LIMIT = 25000; // 2GB
 
 const server = http.createServer(async (req, res) => {
   if (req.method === "PUT" && req.url === "/upload") {
@@ -31,8 +33,18 @@ async function uploadFile(req, res) {
 
   let filePath;
   let uniqueFileName;
+  let fileSize;
   bb.on("file", (name, file, info) => {
     const { filename } = info;
+    if (fileSize > FILE_SIZE_LIMIT) {
+      console.log(
+        `The file "${filename}" of ${fileSize} bytes exceeds the ${FILE_SIZE_LIMIT} bytes limit.`,
+      );
+      file.resume();
+      res.statusCode = 413;
+      return res.end();
+    }
+
     ({ filePath, uniqueFileName } = getNewFilePath(filename));
 
     let bytesRead = 0;
@@ -43,6 +55,12 @@ async function uploadFile(req, res) {
     });
 
     file.pipe(fs.createWriteStream(filePath));
+  });
+
+  bb.on("field", (name, value) => {
+    if (name === "size") {
+      fileSize = value;
+    }
   });
 
   bb.on("close", () => {

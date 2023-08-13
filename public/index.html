@@ -49,6 +49,7 @@
         });
 
         const formData = new FormData();
+        formData.append("size", fileObj.size);
         formData.append("file", fileObj);
 
         uploadFile(formData);
@@ -56,6 +57,7 @@
 
       btnCancel.addEventListener("click", () => {
         controller.abort();
+        btnCancel.style = "display: none;";
         status.textContent = "upload canceled";
       });
 
