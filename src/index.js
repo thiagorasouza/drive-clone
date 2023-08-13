@@ -4,6 +4,7 @@ const path = require("node:path");
 const busboy = require("busboy");
 // const os = require("os");
 const { Server } = require("socket.io");
+const sanitize = require("sanitize-filename");
 
 const UPLOAD_FOLDER = path.join(__dirname, "..", "uploads");
 
@@ -58,7 +59,7 @@ async function uploadFile(req, res) {
 async function deleteFile(req, res) {
   req.on("data", (data) => {
     const fileName = data.toString();
-    const filePath = path.join(UPLOAD_FOLDER, fileName);
+    const filePath = getFilePath(fileName);
     if (fs.existsSync(filePath)) {
       fs.rmSync(filePath);
       res.statusCode = 200;
@@ -67,6 +68,12 @@ async function deleteFile(req, res) {
     }
     res.end();
   });
+}
+
+function getFilePath(fileName) {
+  const sanitizedFileName = sanitize(fileName);
+  const filePath = path.join(UPLOAD_FOLDER, sanitizedFileName);
+  return filePath;
 }
 
 async function showIndex(req, res) {

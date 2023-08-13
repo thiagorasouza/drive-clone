@@ -22,7 +22,7 @@ A Google Drive clone implementing the features that focus on the app's streaming
 
 ## Security
 
-- [ ] User should not be able to delete files outside upload folder
+- [x] User should not be able to delete files outside upload folder
 - [ ] User should not be able to see what other users uploaded
 - [ ] User should not be able to delete other users files
 - [ ] User should not be able to upload a file bigger than file size limit
