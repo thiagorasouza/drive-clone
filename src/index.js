@@ -32,7 +32,7 @@ async function uploadFile(req, res) {
   let uniqueName;
   bb.on("file", (name, file, info) => {
     const { filename } = info;
-    ({ filePath, uniqueName } = getFilePath(filename));
+    ({ filePath, uniqueName } = getNewFilePath(filename));
 
     let bytesRead = 0;
     file.on("data", (chunk) => {
@@ -78,7 +78,7 @@ async function showIndex(req, res) {
   res.end(indexContent);
 }
 
-function getFilePath(filename) {
+function getNewFilePath(filename) {
   const [fname, fext] = filename.split(".");
   // return path.join(os.tmpdir(), `${fname}-${Date.now().toString()}.${fext}`);
   const uniqueName = `${fname}-${Date.now().toString()}.${fext}`;
