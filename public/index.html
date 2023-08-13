@@ -16,15 +16,23 @@
     >
       <label for="file">Choose a file to upload:</label>
       <input type="file" name="file" id="file" />
-      <button type="button" id="btn-upload">Upload</button>
-      <button type="button" id="btn-cancel">Cancel</button>
+      <div class="controls">
+        <button type="button" id="btn-upload">Upload</button>
+        <button type="button" id="btn-cancel" style="display: none">
+          Cancel
+        </button>
+      </div>
       <p>Status: <span id="status"></span></p>
+      <button id="btn-delete" type="button" style="display: none" data-file="">
+        Delete uploaded file
+      </button>
     </div>
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
       const btnUpload = document.getElementById("btn-upload");
       const btnCancel = document.getElementById("btn-cancel");
+      const btnDelete = document.getElementById("btn-delete");
       const inputFile = document.getElementById("file");
       const status = document.getElementById("status");
       const controller = new AbortController();
@@ -43,7 +51,7 @@
         const formData = new FormData();
         formData.append("file", fileObj);
 
-        upload(formData);
+        uploadFile(formData);
       });
 
       btnCancel.addEventListener("click", () => {
@@ -51,9 +59,14 @@
         status.textContent = "upload canceled";
       });
 
-      async function upload(formData) {
+      btnDelete.addEventListener("click", () => {
+        deleteFile(btnDelete.dataset.file);
+      });
+
+      async function uploadFile(formData) {
         try {
           status.textContent = "uploading...";
+          btnCancel.style = "display: block;";
           const response = await fetch("/upload", {
             method: "PUT",
             body: formData,
@@ -62,7 +75,32 @@
 
           if (response.status === 200) {
             status.textContent = "file uploaded.";
+            btnDelete.dataset.file = await response.text();
+            btnDelete.style = "display: block;";
+            btnCancel.style = "display: none;";
           }
+        } catch (error) {
+          console.log(error);
+        }
+      }
+
+      async function deleteFile(file) {
+        try {
+          const response = await fetch("/delete", {
+            method: "DELETE",
+            body: file,
+            headers: {
+              "Content-Type": "text/plain",
+            },
+          });
+
+          if (response.status === 200) {
+            status.textContent = "file deleted.";
+          } else if (response.status === 404) {
+            status.textContent = "file not found.";
+          }
+
+          btnDelete.style = "display: none;";
         } catch (error) {
           console.log(error);
         }

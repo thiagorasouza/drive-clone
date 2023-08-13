@@ -10,6 +10,8 @@ const UPLOAD_FOLDER = path.join(__dirname, "..", "uploads");
 const server = http.createServer(async (req, res) => {
   if (req.method === "PUT" && req.url === "/upload") {
     await uploadFile(req, res);
+  } else if (req.method === "DELETE" && req.url === "/delete") {
+    await deleteFile(req, res);
   } else if (req.method === "GET" && req.url === "/") {
     await showIndex(req, res);
   }
@@ -26,9 +28,11 @@ io.on("connection", (socket) => {
 async function uploadFile(req, res) {
   const bb = busboy({ headers: req.headers });
 
+  let filePath;
+  let uniqueName;
   bb.on("file", (name, file, info) => {
     const { filename } = info;
-    const filePath = getFilePath(filename);
+    ({ filePath, uniqueName } = getFilePath(filename));
 
     let bytesRead = 0;
     file.on("data", (chunk) => {
@@ -41,12 +45,28 @@ async function uploadFile(req, res) {
   });
 
   bb.on("close", () => {
-    currentSocket.disconnect();
-    res.writeHead(200, { Connection: "close" });
-    res.end();
+    if (currentSocket) currentSocket.disconnect();
+
+    res.statusCode = 200;
+    res.setHeader("Connection", "close");
+    res.end(uniqueName);
   });
 
   req.pipe(bb);
+}
+
+async function deleteFile(req, res) {
+  req.on("data", (data) => {
+    const fileName = data.toString();
+    const filePath = path.join(UPLOAD_FOLDER, fileName);
+    if (fs.existsSync(filePath)) {
+      fs.rmSync(filePath);
+      res.statusCode = 200;
+    } else {
+      res.statusCode = 404;
+    }
+    res.end();
+  });
 }
 
 async function showIndex(req, res) {
@@ -61,7 +81,9 @@ async function showIndex(req, res) {
 function getFilePath(filename) {
   const [fname, fext] = filename.split(".");
   // return path.join(os.tmpdir(), `${fname}-${Date.now().toString()}.${fext}`);
-  return path.join(UPLOAD_FOLDER, `${fname}-${Date.now().toString()}.${fext}`);
+  const uniqueName = `${fname}-${Date.now().toString()}.${fext}`;
+  const filePath = path.join(UPLOAD_FOLDER, uniqueName);
+  return { filePath, uniqueName };
 }
 
 server.listen(4000, () => {
