@@ -30,10 +30,10 @@ async function uploadFile(req, res) {
   const bb = busboy({ headers: req.headers });
 
   let filePath;
-  let uniqueName;
+  let uniqueFileName;
   bb.on("file", (name, file, info) => {
     const { filename } = info;
-    ({ filePath, uniqueName } = getNewFilePath(filename));
+    ({ filePath, uniqueFileName } = getNewFilePath(filename));
 
     let bytesRead = 0;
     file.on("data", (chunk) => {
@@ -50,7 +50,7 @@ async function uploadFile(req, res) {
 
     res.statusCode = 200;
     res.setHeader("Connection", "close");
-    res.end(uniqueName);
+    res.end(uniqueFileName);
   });
 
   req.pipe(bb);
@@ -70,6 +70,13 @@ async function deleteFile(req, res) {
   });
 }
 
+function getNewFilePath(fileName) {
+  const [_, name, ext] = fileName.match(/^(.+)\.(\w+)$/);
+  const uniqueFileName = `${name}-${Date.now().toString()}.${ext}`;
+  const filePath = path.join(UPLOAD_FOLDER, uniqueFileName);
+  return { filePath, uniqueFileName };
+}
+
 function getFilePath(fileName) {
   const sanitizedFileName = sanitize(fileName);
   const filePath = path.join(UPLOAD_FOLDER, sanitizedFileName);
@@ -83,14 +90,6 @@ async function showIndex(req, res) {
   res.statusCode = 200;
   res.setHeader("Content-Type", "text/html");
   res.end(indexContent);
-}
-
-function getNewFilePath(filename) {
-  const [fname, fext] = filename.split(".");
-  // return path.join(os.tmpdir(), `${fname}-${Date.now().toString()}.${fext}`);
-  const uniqueName = `${fname}-${Date.now().toString()}.${fext}`;
-  const filePath = path.join(UPLOAD_FOLDER, uniqueName);
-  return { filePath, uniqueName };
 }
 
 server.listen(4000, () => {
