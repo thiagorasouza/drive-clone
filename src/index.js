@@ -4,6 +4,7 @@ const path = require("node:path");
 const { Server } = require("socket.io");
 const { uploadFile } = require("./upload.js");
 const { deleteFile } = require("./delete.js");
+const { showIndex } = require("./showIndex.js");
 
 const server = http.createServer(async (req, res) => {
   if (req.method === "PUT" && req.url === "/upload") {
@@ -22,15 +23,6 @@ io.on("connection", (socket) => {
   currentSocket = socket;
   console.log(`Socket connected: ${socket.id}`);
 });
-
-async function showIndex(req, res) {
-  const indexPath = path.join(__dirname, "..", "public", "index.html");
-  const indexContent = await fs.promises.readFile(indexPath, "utf-8");
-
-  res.statusCode = 200;
-  res.setHeader("Content-Type", "text/html");
-  res.end(indexContent);
-}
 
 server.listen(4000, () => {
   console.log("Server running on 4000");
