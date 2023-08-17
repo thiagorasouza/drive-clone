@@ -4,11 +4,10 @@ const path = require("node:path");
 const busboy = require("busboy");
 // const os = require("os");
 const { Server } = require("socket.io");
-const sanitize = require("sanitize-filename");
+const { getNewFilePath, getFilePath } = require("./helpers");
 
-const UPLOAD_FOLDER = path.join(__dirname, "..", "uploads");
 // const FILE_SIZE_LIMIT = 2147483648; // 2GB
-const FILE_SIZE_LIMIT = 25000; // 2GB
+const FILE_SIZE_LIMIT = 26000; // 2GB
 
 const server = http.createServer(async (req, res) => {
   if (req.method === "PUT" && req.url === "/upload") {
@@ -42,7 +41,7 @@ async function uploadFile(req, res) {
       );
       file.resume();
       res.statusCode = 413;
-      return res.end();
+      return;
     }
 
     ({ filePath, uniqueFileName } = getNewFilePath(filename));
@@ -66,7 +65,10 @@ async function uploadFile(req, res) {
   bb.on("close", () => {
     if (currentSocket) currentSocket.disconnect();
 
-    res.statusCode = 200;
+    if (!res.statusCode) {
+      res.statusCode = 200;
+    }
+
     res.setHeader("Connection", "close");
     res.end(uniqueFileName);
   });
@@ -86,19 +88,6 @@ async function deleteFile(req, res) {
     }
     res.end();
   });
-}
-
-function getNewFilePath(fileName) {
-  const [_, name, ext] = fileName.match(/^(.+)\.(\w+)$/);
-  const uniqueFileName = `${name}-${Date.now().toString()}.${ext}`;
-  const filePath = path.join(UPLOAD_FOLDER, uniqueFileName);
-  return { filePath, uniqueFileName };
-}
-
-function getFilePath(fileName) {
-  const sanitizedFileName = sanitize(fileName);
-  const filePath = path.join(UPLOAD_FOLDER, sanitizedFileName);
-  return filePath;
 }
 
 async function showIndex(req, res) {
