@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Google Drive Clone",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "start": "node src/index.js",
     "dev": "npx nodemon src/index.js",
@@ -28,6 +29,7 @@
   },
   "dependencies": {
     "busboy": "^1.6.0",
+    "get-folder-size": "^4.0.0",
     "sanitize-filename": "^1.6.3",
     "socket.io": "^4.7.2"
   }

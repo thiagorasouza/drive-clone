@@ -1,7 +1,10 @@
-const path = require("node:path");
-const sanitize = require("sanitize-filename");
+import path from "node:path";
+import sanitize from "sanitize-filename";
+import * as url from "url";
+const __dirname = url.fileURLToPath(new URL(".", import.meta.url));
 
 const UPLOAD_FOLDER = path.join(__dirname, "..", "uploads");
+const PUBLIC_FOLDER = path.join(__dirname, "..", "public");
 
 function getNewFilePath(fileName) {
   const [_, name, ext] = fileName.match(/^(.+)\.(\w+)$/);
@@ -16,4 +19,12 @@ function getFilePath(fileName) {
   return filePath;
 }
 
-module.exports = { getNewFilePath, getFilePath };
+function getUploadPath() {
+  return UPLOAD_FOLDER;
+}
+
+function getPublicPath() {
+  return PUBLIC_FOLDER;
+}
+
+export { getNewFilePath, getFilePath, getUploadPath, getPublicPath };

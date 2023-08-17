@@ -1,7 +1,9 @@
-const busboy = require("busboy");
-const fs = require("node:fs");
-const { getNewFilePath, getFilePath } = require("./helpers.js");
+import busboy from "busboy";
+import fs from "node:fs";
+import getFolderSize from "get-folder-size";
+import { getNewFilePath, getUploadPath } from "./helpers.js";
 
+const DISK_USAGE_LIMIT = 50 * 1024;
 const FILE_SIZE_LIMIT = 26000;
 
 async function uploadFile(req, res, currentSocket) {
@@ -10,13 +12,25 @@ async function uploadFile(req, res, currentSocket) {
   let filePath;
   let uniqueFileName;
   let fileSize;
-  bb.on("file", (name, file, info) => {
+
+  bb.on("file", async (name, file, info) => {
     const { filename } = info;
     if (fileSize > FILE_SIZE_LIMIT) {
       console.log(
         `The file "${filename}" of ${fileSize} bytes exceeds the ${FILE_SIZE_LIMIT} bytes limit.`,
       );
       file.resume();
+      res.statusCode = 413;
+      return;
+    }
+
+    const diskUsage = await getFolderSize.loose(getUploadPath());
+    const availableDiskSpace = DISK_USAGE_LIMIT - diskUsage;
+
+    if (fileSize > availableDiskSpace) {
+      console.log(
+        `The file "${filename}" of ${fileSize} bytes exceeds the ${DISK_USAGE_LIMIT} disk usage limit.`,
+      );
       res.statusCode = 413;
       return;
     }
@@ -53,4 +67,4 @@ async function uploadFile(req, res, currentSocket) {
   req.pipe(bb);
 }
 
-module.exports = { uploadFile };
+export { uploadFile };

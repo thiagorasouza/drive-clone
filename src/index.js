@@ -1,10 +1,8 @@
-const http = require("node:http");
-const fs = require("node:fs");
-const path = require("node:path");
-const { Server } = require("socket.io");
-const { uploadFile } = require("./upload.js");
-const { deleteFile } = require("./delete.js");
-const { showIndex } = require("./showIndex.js");
+import http from "node:http";
+import { Server } from "socket.io";
+import { uploadFile } from "./upload.js";
+import { deleteFile } from "./delete.js";
+import { showIndex } from "./showIndex.js";
 
 const server = http.createServer(async (req, res) => {
   if (req.method === "PUT" && req.url === "/upload") {

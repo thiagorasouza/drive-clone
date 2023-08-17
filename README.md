@@ -24,7 +24,7 @@ A Google Drive clone implementing the features that focus on the app's streaming
 
 - [x] User should not be able to delete files outside upload folder
 - [x] User should not be able to upload a file bigger than file size limit
-- [ ] User should not be able to upload a file if disk usage limit is going to be exceed
+- [x] User should not be able to upload a file if disk usage limit is going to be exceed
 - [ ] User should not be able to upload a file if network usage limit is going to be reached
 - [ ] User should not be able to see what other users uploaded
 - [ ] User should not be able to delete other users files

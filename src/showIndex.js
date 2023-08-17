@@ -1,8 +1,9 @@
-const fs = require("node:fs");
-const path = require("node:path");
+import fs from "node:fs";
+import path from "node:path";
+import { getPublicPath } from "./helpers.js";
 
 async function showIndex(req, res) {
-  const indexPath = path.join(__dirname, "..", "public", "index.html");
+  const indexPath = path.join(getPublicPath(), "index.html");
   const indexContent = await fs.promises.readFile(indexPath, "utf-8");
 
   res.statusCode = 200;
@@ -10,4 +11,4 @@ async function showIndex(req, res) {
   res.end(indexContent);
 }
 
-module.exports = { showIndex };
+export { showIndex };

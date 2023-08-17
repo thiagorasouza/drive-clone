@@ -1,5 +1,5 @@
-const fs = require("node:fs");
-const { getFilePath } = require("./helpers.js");
+import fs from "node:fs";
+import { getFilePath } from "./helpers.js";
 
 async function deleteFile(req, res) {
   req.on("data", (data) => {
@@ -15,4 +15,4 @@ async function deleteFile(req, res) {
   });
 }
 
-module.exports = { deleteFile };
+export { deleteFile };
