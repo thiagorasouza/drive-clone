@@ -1,6 +1,6 @@
 const busboy = require("busboy");
 const fs = require("node:fs");
-const { getNewFilePath, getFilePath } = require("./helpers");
+const { getNewFilePath, getFilePath } = require("./helpers.js");
 
 const FILE_SIZE_LIMIT = 26000;
 

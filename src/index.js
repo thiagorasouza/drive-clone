@@ -1,9 +1,9 @@
 const http = require("node:http");
 const fs = require("node:fs");
 const path = require("node:path");
-const { getNewFilePath, getFilePath } = require("./helpers");
-const { uploadFile } = require("./upload");
 const { Server } = require("socket.io");
+const { uploadFile } = require("./upload.js");
+const { deleteFile } = require("./delete.js");
 
 const server = http.createServer(async (req, res) => {
   if (req.method === "PUT" && req.url === "/upload") {
@@ -22,20 +22,6 @@ io.on("connection", (socket) => {
   currentSocket = socket;
   console.log(`Socket connected: ${socket.id}`);
 });
-
-async function deleteFile(req, res) {
-  req.on("data", (data) => {
-    const fileName = data.toString();
-    const filePath = getFilePath(fileName);
-    if (fs.existsSync(filePath)) {
-      fs.rmSync(filePath);
-      res.statusCode = 200;
-    } else {
-      res.statusCode = 404;
-    }
-    res.end();
-  });
-}
 
 async function showIndex(req, res) {
   const indexPath = path.join(__dirname, "..", "public", "index.html");
