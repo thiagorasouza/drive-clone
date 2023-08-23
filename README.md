@@ -33,5 +33,5 @@ A Google Drive clone implementing the features that focus on the app's streaming
 
 - [ ] Progress update should be throttled to a minimum of 200ms interval between updates
 - [x] Maximum file size should be configurable
-- [ ] Maximum disk use per user should be configurable
+- [x] Maximum disk use per user should be configurable
 - [ ] Maximum network use per user should be configurable
